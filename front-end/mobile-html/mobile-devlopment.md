@@ -251,6 +251,16 @@ input:checked + .test {
 - 当横向布局时，给 `flex子项` 子项定义 `width` 为非 `auto` 的值
 - 当纵向布局时，给 `flex子项` 子项定义 `height` 为非 `auto` 的值
 
+
+### 调试
+- 响应式测试：Chrome DevTools 面板右侧拉伸快速查看效果；Firefox 响应式工具进一步调整；Chrome Emulation 精细测试。
+- Android 设备测试：使用 Android 虚拟机；优先使用 Weinre 测试，分析用户浏览器使用份额，有针对的进行测试。高版本 Android 测试机，使用 Chrome 连接调试。Android 4.4+ 的 WebView 修改 APP 源代码，也可以用 Chrome 调试。
+- 低版本系统和其他品牌手机以及 WebView：统统可以用 Weinre 来解决。
+- iOS 设备测试：使用 Xcode 自带 iOS 模拟器，使用 Safari 调试；WebView 也可以被电脑上 Safari 调试；测试机连接电脑，也可以用 Safari 调试；MIHTool 可以在 iOS 设备上使用，提供类似 Weinre 的调试功能。
+- 测试多种设备：BrowserStack 和 Keynote。
+- 使用 BrowserSync 可以创建本地局域网 IP 服务器，并同步操作、监听刷新，极大减少测试操作，提高测试效率。
+- 当移动端设备无法访问某项资源时，使用 Charles 做代理，通过电脑去访问。
+
 ### 参考
 - [移动端经验开发指南](http://hackersome.com/p/doyoe/trip)
 - [前端开发规范手册](http://zhibimo.com/read/Ashu/front-end-style-guide/mobile-optimize/index.html)
