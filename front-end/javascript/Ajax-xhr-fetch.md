@@ -15,6 +15,68 @@ if (window.XMLHttpRequest) {
 }
 ```
 
+1、创建XMLHttpRequest对象
+  XMLHttpRequest 对象 ，异步的提交请求给服务器 
+    创建 XMLHttpRequest (xhr)
+    不同的浏览器有不同的 xhr 对象
+    IE7+,FF,Chrome
+    类型：XMLHttpRequest
+    IE6 IE5.5
+    类型:ActiveXObject("Microsoft.XMLHttp")
+    判断浏览器类型 ：
+    if(window.XMLHttpRequest){
+         //IE7+,FF,Chrome
+         xhr = new XMLHttpRequest();
+    } else {
+        // IE6 IE5.5
+         xhr = new ActiveXObject("Microsoft.XMLHttp");
+    }
+2、XMLHttpRequest对象的属性与方法
+   xhr方法:
+     a、open(method,url,asyn): 创建请求 
+            method:get , post 
+            url : servlet 路径
+                    -get: var uri="test.do?name=value&name=value";
+                    -post: var uri="servlet 路径"
+            asyn : true 表示异步    false 表示同步 
+     b、send(body) : 发送请求
+             get : send(null)
+             post : send("name=value&name=value");
+     c、setRequestHeader() : 设置请求消息头
+        当请求方式为post的时候，有参数的时候必须手动设置请求消息头 setRequestHeader("Content-type","application/x-www-form-urlencoded");
+     d、abort : 取消所有请求
+     e、getAllResponseHeaders :获取所有响应消息头
+           getResponseHeader : 获取指定的响应消息头
+   xhr属性:
+     a、readyState:ajax对象与服务器交互状态
+           0：尚未初始化
+           1：正在发送请求
+           2：请求发送完成
+           3：请求成功，服务器响应数据
+           4：数据接收成功，响应完成
+     b、status：服务器响应状态
+           404 ：为找到
+           405 ：service方法
+           500 ：内部异常
+           200 ：服务器正常响应
+     c、responseText ：服务器端响应的数据
+     d、responseXML : 服务器端响应的xml文本
+     e、onreadystatechange:绑定事件处理函数
+        每当readyState发生改变的时候，都会激发当前绑定的函数
+3、通过ajax发送异步请求
+   步骤:
+      a、创建 XMLHttpRequest
+      b、创建请求
+         调用 open()
+      c、设置事件绑定函数(设置回调函数)
+         onreadystatechange=function(){
+  if(xhr.readyState==4&&xhr.status==200){
+           ...;
+      }
+  }
+      d、发送请求
+         send
+
 ### XHR对象的请求及相应
 #### request
 - xhr.setRequestHeader(header,value)

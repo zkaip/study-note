@@ -8,6 +8,16 @@
 - 减少`Cookie`的大小
 - 使用无`Cookie`的域来存放静态资源(可以利用`CDN`)
 
+### DNS预读
+`<link rel="dns-prefetch" href="//host_name_to_prefetch.com">`
+
+### 资源预加载
+`<link rel="prefetch" href="/images/big.jpeg">`
+
+### JS延时加载
+`<script defer src="myscript.js"></script>` 
+`<script async src="myscript.js"></script>` 加载之后立即执行, 可以用于网页访问分析脚本
+
 ### DOM 优化
 #### 优化节点修改(使用`cloneNode`在外部更新节点后在通过`replace`与原始节点互换)
 ```javascript
