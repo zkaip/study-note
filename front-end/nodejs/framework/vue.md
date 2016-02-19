@@ -1,4 +1,4 @@
-vuejs 1.0
+[vuejs 1.0](http://cn.vuejs.org/guide/)
 ===
 ## Vue 实例
 ### 构造器
@@ -578,11 +578,200 @@ MyPlugin.install = function (Vue, options) {
 
 ---
 
-vue-router
+[vue-router](http://vuejs.github.io/vue-router/zh-cn/index.html)
 ===
+## 安装使用
+`npm install vue-router`
+```javascript
+var Vue = require('vue')
+var VueRouter = require('vue-router')
+
+Vue.use(VueRouter)
+```
+
+## 基本用法
+```
+v-link={path:'/foo'}
+router-view
+router = new VueRouter()
+router.Map({})
+router.start(App, '#app')
+```
+
+**嵌套路由**:`subRoutes`
+
+## 路由对象和路由匹配
+每个组件都会被注入 `this.$router`
+- `$route.path` 字符串,当前路有对象的路径(绝对路径)
+- `$route.params` 对象，包含路由中的动态片段和全匹配片段的键值对
+- `$route.query` 对象,路由查询参数的键值对
+- `$route.router` 路由规则所属的路由器(以及其所属的组件)
+- `$route.matched` 数组, 包含当前匹配的路径中所包含的所有片段所对应的配置参数对象
+- `$route.name` 当前路径的名字
+
+自定义字段
+在模板中使用 `$route`
+动态片段匹配 `:param`(`$route.params`)
+全匹配:`*any`
+
+## vue-router options
+- `hashbang` 默认`true`, 只在 `hash` 模式下可用, 所有的路径都会被格式化为以 `#!` 开头
+- `history` 默认`false`, 启用 `HTML5 history` 模式。利用 `history.pushState()` 和 `history.replaceState()` 来管理浏览历史记录。服务器需要被[正确配置](http://readystate4.com/2012/05/17/nginx-and-apache-rewrite-to-support-html5-pushstate/) 以防用户在直接访问链接时会遇到404页面。
+- `abstract` 默认`false`, 使用一个不依赖于浏览器的浏览历史虚拟管理后端。
+- `root` 默认值： `null`, 只在 HTML5 history 模式下可用, 定义路由根路径
+- `linkActiveClass` 默认值:`v-link-active` 配置当 v-link 元素匹配的路径时需要添加到元素上的 class
+- `saveScrollPosition` 默认值：`false`, 只在 HTML5 history 模式下可用
+- `transitionOnLoad` 默认值：`false`, 在初次加载时是否对 <router-view> 处理场景切换效果。默认情况下，组件在初次加载时会直接渲染。
+- `suppressTransitionError` 默认值：`false` 当值为 true 时，在场景切换钩子函数中发生的异常会被吞掉。
+
+## `<router-view>` 用于渲染匹配的组件，它基于 Vue 的动态组件系统，所以它继承了一个正常动态组件的很多特性。
+
+- 你可以传递 props。
+- `<router-view>` 中的 HTML 内容会被插入到相应组件的内容插入点（由 content 指定）。
+- `v-transition` 和 `transition-mode` 的完整支持。注意：为了场景切换效果能正常工作，路由组件必须不是一个片断实例。
+- `v-ref` 也得到支持；被渲染的组件会注册到父级组件的 this.$ 对象。
+- `keep-alive` 目前在 0.7.2+ 已经可用。
+- `wait-for` 不支持。你应该使用切换钩子函数 `activate` 控制切换的时机。
+
+## v-link
+连接是否活跃的匹配也可以通过 exact 内联选项来设置为 **只有当路径完全一致时才匹配**：
+`<a v-link="{ path: '/a', exact: true }"></a>`
+
+**链接活跃时的 class**
+`<a v-link="{ path: '/a', activeClass: 'custom-active-class' }"></a>`
+
+**replace**
+一个带有 **replace: true** 的链接被点击时将会触发 **router.replace()** 而不是 **router.go()**。由此产生的跳转不会留下历史记录
+
+**append**
+带有 **append: true** 选项的相对路径链接会确保该相对路径始终添加到当前路径之后。
+
+**v-link 会自动设置 <a> 的 href 属性**
+
+**v-link 不再支持包含 mustache 标签。可以用常规的JavaScript表达式代替 mustache 标签， 例如 v-link="'user/' + user.name"**
+
+## 切换控制流水线 钩子函数
+在切换过程中，`<router-view>` 组件可以通过实现一些钩子函数来控制切换过程。这些钩子函数包括：
+- `data`
+- `activate`
+- `deactivate`
+- `canActivate`
+- `canDeactivate`
+- `canReuse`
+
+**切换对象 transition**
+- `transition.to` 一个代表将要切换到的路径的路由对象。
+- `transition.from` 一个代表当前路径的路由对象。
+- `transition.next()` 调用此函数处理切换过程的下一步。
+- `transition.abort([reason])` 调用此函数来终止或者拒绝此次切换。
+- `transition.redirect(path)` 取消当前切换并重定向到另一个路由。
+
+**钩子函数异步`resolve`规则**
+- 如果钩子返回一个 `Promise`，则钩子何时 `resolve` 取决于该 `Promise` 何时 `resolve`。
+- 如果钩子既不返回 `Promise`，也没有任何参数，则该钩子将被同步 `resolve`。
+- 如果钩子不返回 `Promise`，但是有一个参数 (`transition`)，则钩子会等到 `transition.next()`, `transition.abort()` 或是 `transition.redirect()` 之一被调用才 `resolve`。
+- 在验证类的钩子，比如 `canActivate`, `canDeactivate` 以及全局 `beforeEach` 钩子 中，如果返回值是一个布尔值 (`Boolean`)，也会使得钩子同步 `resolve`。
+
+**在钩子中返回 `Promise`**
+- 当在钩子函数中返回一个 `Promise` 时，系统会在该 `Promise` 被 `resolve` 之后自动调用transition.next。
+- 如果 `Promise` 在验证阶段被 `reject`，系统会调用 `transition.abort`。
+- 如果 `Promise` 在激活阶段被 `reject`，系统会调用 `transition.next `。
+- 对于验证类钩子（ `canActivate` 和 `canDeactivate` ），如果 `Promise` `resolve` 之后的值是假值（ `false value` ），系统会中断此次切换。
+- 如果一个被 `reject` 的 `Promise` 抛出了未捕获的异常，这个异常会继续向上抛出，除非在创建路由器的时候启用了参数 `suppressTransitionError` 。
+
+**钩子合并**
+- data
+- activate
+- deactivate
+
+验证类钩子，比如 `canActivate`, `canDeactivate` 和 `canReuse` 在合并选项时会直接被新值覆盖。
+
+**`data(transition) [-> Promise]`**
+在激活阶段被调用，在 activate 被断定（ resolved ，指该函数返回的 promise 被 resolve ）。用于加载和设置当前组件的数据。
+
+**可选择性返回 Promise**。
+> resolve -> transition.next()
+> reject(reason) -> transition.abort(reason)
+
+**或者，返回一个包含 Promise 的对象。**
+
+**`activate(transition) [-> Promise]`**
+在激活阶段，当组件被创建而且将要切换进入的时候被调用。
+
+**`deactivate(transition) [-> Promise]`**
+在激活阶段，当一个组件将要被禁用和移除之时被调用。
+
+**`canActivate(transition) [-> Promise | Boolean]`**
+在验证阶段，当一个组件将要被切入的时候被调用。
+
+**`canDeactivate(transition) [-> Promise | Boolean]`**
+在验证阶段，当一个组件将要被切出的时候被调用。
+
+**`canReuse: Boolean | canReuse(transition) -> Boolean`**
+决定组件是否可以被重用。如果一个组件不可以重用，当前实例会被一个新的实例替换，这个新实例会经历正常的验证和激活阶段。
+此路由配置参数可以是一个 Boolean 值或者一个返回同步的返回 Boolean 值的函数。默认值为 true .
+
+## API router
+- router.app 此路由器管理的根 Vue 实例。这个实例是由调用 router.start() 传入的 Vue 组件构造器函数创建的。
+- router.mode `html5`、`hash` 或者 `abstract`
+- router.start(App, el)
+- router.stop()
+- router.map(routeMap)
+  - component
+  - subRoutes
+- router.on(path, config)
+- router.go(path)
+- router.replace(path)
+- router.redirect(redirectMap)
+- router.alias(aliasMap)
+- router.beforeEach(hook)
+- router.afterEach(hook)
+
 ## 杂项
 路由配置时不要使用下划线
 
+---
+
+[Vue Component Spec](http://vuejs.github.io/vue-loader/index.html)
+===
+## Dependencies
+```bash
+npm install\
+  webpack webpack-dev-server\
+  vue-loader vue-html-loader css-loader vue-style-loader vue-hot-reload-api\
+  babel-loader babel-core babel-plugin-transform-runtime babel-preset-es2015\
+  babel-runtime@5\
+  --save-dev
+npm install vue --save
+```
+
+## Features
+- ES2015 and Babel
+- Scoped CSS (局部CSS)
+- PostCSS and Autoprefixer
+- Hot Reload
+
+## Configurations
+- `Pre-Processors` 配置预加载器(`lang`)
+  - `sass` `jade` `coffee`...
+- `Asset URL Handling` 静态资源处理
+  - `npm install url-loader file-loader --save-dev`
+- `Advanced Loader Configuration`
+  - `vue-loader`
+- `Extracting CSS into a Single File` 把分散的CSS文件归集到一个文件
+  - `npm install extract-text-webpack-plugin --save-dev`
+
+## Workflow 工作流
+- Production Build 生产环境
+- Linting 代码规范
+- Testing 测试
+- Testing with Mocks Mock数据测试
+
+## Options Reference
+- loaders
+- autoprefixer
+- postcss
+- cssSourceMap
 
 
 
@@ -597,7 +786,4 @@ vue-router
 
 
 
-
-
-
-
+- ``
